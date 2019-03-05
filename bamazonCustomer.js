@@ -14,7 +14,9 @@ var itemID=0;
 var itemQuant=0;
 var stockQuant=0;
 var itemName="";
+var prevTotal=0;
 var priceTotal=0;
+var totalSales=0;
 
 connection.connect(function(err) {
   if (err) throw err;
@@ -40,7 +42,7 @@ function readProducts(){
     inquirer.prompt([
         {
             type: "input",
-            message: "Please provide the ID of the product you like to purchase today:",
+            message: "Please provide the ID of the product you would like to purchase today:",
             name: "id"
         },
         {
@@ -81,14 +83,16 @@ function checkStock(itemID,itemQuant){
     ],
     function(err, res) {
       itemName=res[0].product_name;
+      prevTotal=res[0].product_sales;
       priceTotal=res[0].price*itemQuant;
+      totalSales=prevTotal+priceTotal;
       stockQuant=res[0].stock_quantity;
-      console.log("Quantity remaining: "+res[0].stock_quantity);
+      //console.log("Quantity remaining: "+res[0].stock_quantity);
       if(itemQuant<=res[0].stock_quantity){
           shoppingBasket()
       }
       else{
-          console.log("Insufficient stock, please check in 24 hours for new stock.");
+          console.log("Insufficient stock, please check in 24 hours for new arrivals.");
           connection.end();
       }
     })
@@ -126,7 +130,7 @@ function checkout(){
         },
         {
             type: "input",
-            message: "Please provide your expiration date",
+            message: "Please provide your expiration date mm/yy",
             name: "cc",
         },
     ])
@@ -136,7 +140,7 @@ function checkout(){
             connection.query("UPDATE products SET ? WHERE ?",
               [
                 {
-                    stock_quantity: stockQuant-itemQuant
+                    stock_quantity: stockQuant-itemQuant , product_sales: totalSales
                 },
                 {
                     item_id: itemID
