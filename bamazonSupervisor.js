@@ -11,14 +11,6 @@ var connection = mysql.createConnection({
   database: "bamazon"
 });
 
-var itemID=0;
-var itemQuant=0;
-var stockQuant=0;
-var itemName="";
-var prevTotal=0;
-var priceTotal=0;
-var totalSales=0;
-
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId);
@@ -59,7 +51,16 @@ function viewSales(){
     connection.query(`SELECT a.department_id,a.department_name,a.overhead_costs,SUM(b.product_sales) AS "sales_total" FROM departments= a INNER JOIN products= b ON b.department_name = a.department_name GROUP BY department_id`, function(err, res) {
         if (err) throw err;
         console.log("\nSales by Dept\n-----------------------")
-        console.log(res[0].sales_total)
+        table = new Table({
+            head: ['department_id','department_name','overhead_costs','sales_total','total_profit']
+        
+          , colWidths: [15,15,15,15]
+        });
+        for (i=0;i<res.length;i++){
+            table.push(
+                [res[i].department_id,res[i].department_name,res[i].overhead_costs,res[i].sales_total,res[i].sales_total-res[i].overhead_costs]
+            ); 
+        }console.log(table.toString());
       console.log("End of Table\n-----------------------") 
       init()
       });
