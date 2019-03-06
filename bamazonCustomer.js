@@ -36,7 +36,7 @@ function readProducts(){
       table = new Table({
         head: ['ID','Product Name','Department','Price']
     
-      , colWidths: [4,15,20,15]
+      , colWidths: [4,20,15,15]
     });
       for (i=0;i<res.length;i++){
         table.push(

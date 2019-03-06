@@ -50,7 +50,6 @@ function init(){
 function viewSales(){
     connection.query(`SELECT a.department_id,a.department_name,a.overhead_costs,SUM(b.product_sales) AS "sales_total" FROM departments= a LEFT JOIN products= b ON b.department_name = a.department_name GROUP BY department_id`, function(err, res) {
         if (err) throw err;
-        console.log(res)
         console.log("\nSales by Dept\n-----------------------")
         table = new Table({
             head: ['department_id','department_name','overhead_costs','sales_total','total_profit']
