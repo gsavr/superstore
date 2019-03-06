@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer")
 var CFonts = require('cfonts');
+var Table = require('cli-table3');
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -32,9 +33,18 @@ function readProducts(){
     connection.query("SELECT * FROM bamazon.products", function(err, res) {
       if (err) throw err;
       console.log("\nProducts Available\n-----------------")
+      table = new Table({
+        head: ['ID','Product Name','Department','Price']
+    
+      , colWidths: [4,15,20,15]
+    });
       for (i=0;i<res.length;i++){
-      console.log(res[i].product_name+"\n$"+res[i].price+".00\nProduct ID:"+res[i].item_id+"\n-----------------");
-    }buyProduct();
+        table.push(
+            [res[i].item_id,res[i].product_name,res[i].department_name,'$ '+res[i].price.toFixed(2)]
+        ); 
+    }console.log(table.toString());
+    console.log("-----------------------") 
+    buyProduct();
     });
   };
 

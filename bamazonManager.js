@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer")
 var CFonts = require('cfonts');
+var Table = require('cli-table3');
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -64,9 +65,17 @@ function readProducts(){
     connection.query("SELECT * FROM bamazon.products", function(err, res) {
       if (err) throw err;
       console.log("\nProducts Available\n-----------------------")
+      table = new Table({
+        head: ['ID','Department','Product Name','Price','Quant_stock']
+    
+      , colWidths: [4,15,20,15,15]
+    });
       for (i=0;i<res.length;i++){
-        console.log("Product ID:"+res[i].item_id+"\nDepartment: "+res[i].department_name+"\n"+res[i].product_name+"\n$"+res[i].price+".00\nQuantity in stock:"+res[i].stock_quantity+"\n-----------------------");
-        }
+        table.push(
+            [res[i].item_id,res[i].department_name,res[i].product_name,'$ '+res[i].price.toFixed(2),res[i].stock_quantity]
+        ); 
+        /* console.log("Product ID:"+res[i].item_id+"\nDepartment: "+res[i].department_name+"\n"+res[i].product_name+"\n$"+res[i].price+".00\nQuantity in stock:"+res[i].stock_quantity+"\n-----------------------"); */
+        }console.log(table.toString());
     console.log("End of Product Listings\n-----------------------") 
     init()
     });
